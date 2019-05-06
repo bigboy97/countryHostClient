@@ -1,6 +1,8 @@
 {
   "name": "host-client-app",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular",
   "id": "7c131917"
 }
