@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Add Reservation
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form id="reservationForm" [formGroup]="reservationForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input reequired formControlName="tableNumber" type="number"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Name <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input required formControlName="name" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Size <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input required formControlName="size" type="number"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Date and Time <ion-text>*</ion-text></ion-label>
+      <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"></ion-datetime>
+    </ion-item>
+    <ion-button block color="primary" type="submit" [disabled]="!reservationForm.valid">
+      Create
+    </ion-button>
+  </form>
+</ion-content>

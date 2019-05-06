@@ -1,0 +1,1254 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Today's Outlook
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 1</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelOneReservations$ | async; let tabelOneReservations;">
+      <ion-item *ngIf="tabelOneReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelOneReservation of tabelOneReservations"
+        [color]="(tabelOneReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelOneReservation.time}}&nbsp;&nbsp;{{tabelOneReservation.id}}&nbsp;&#40;{{tabelOneReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelOneReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelOneReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelOneReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelOneReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelOneReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelOneReservation.id)"
+            [style.display]="(tabelOneReservation.status == 's' || getStoredID() == tabelOneReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end" (click)="showForm(true);setID(tabelOneReservation.id);clearValues();"
+            color="warning"
+            [style.display]="(tabelOneReservation.status == 's' || getStoredID() == tabelOneReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelOneReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelOneReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 2</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwoReservations$ | async; let tabelTwoReservations;">
+      <ion-item *ngIf="tabelTwoReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelTwoReservation of tabelTwoReservations"
+        [color]="(tabelTwoReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwoReservation.time}}&nbsp;&nbsp;{{tabelTwoReservation.id}}&nbsp;&#40;{{tabelTwoReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwoReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwoReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwoReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwoReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwoReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwoReservation.id)"
+            [style.display]="(tabelTwoReservation.status == 's' || getStoredID() == tabelTwoReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end" (click)="showForm(true);setID(tabelTwoReservation.id);clearValues();"
+            color="warning"
+            [style.display]="(tabelTwoReservation.status == 's' || getStoredID() == tabelTwoReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwoReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelTwoReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 3</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelThreeReservations$ | async; let tabelThreeReservations;">
+      <ion-item *ngIf="tabelThreeReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelThreeReservation of tabelThreeReservations"
+        [color]="(tabelThreeReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelThreeReservation.time}}&nbsp;&nbsp;{{tabelThreeReservation.id}}&nbsp;&#40;{{tabelThreeReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelThreeReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelThreeReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelThreeReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelThreeReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelThreeReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelThreeReservation.id)"
+            [style.display]="(tabelThreeReservation.status == 's' || getStoredID() == tabelThreeReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end" (click)="showForm(true);setID(tabelThreeReservation.id);clearValues();"
+            color="warning"
+            [style.display]="(tabelThreeReservation.status == 's' || getStoredID() == tabelThreeReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelThreeReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelThreeReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 4</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelFourReservations$ | async; let tabelFourReservations;">
+      <ion-item *ngIf="tabelFourReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelFourReservation of tabelFourReservations"
+        [color]="(tabelFourReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelFourReservation.time}}&nbsp;&nbsp;{{tabelFourReservation.id}}&nbsp;&#40;{{tabelFourReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelFourReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelFourReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelFourReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelFourReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelFourReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelFourReservation.id)"
+            [style.display]="(tabelFourReservation.status == 's' || getStoredID() == tabelFourReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end" (click)="showForm(true);setID(tabelFourReservation.id);clearValues();"
+            color="warning"
+            [style.display]="(tabelFourReservation.status == 's' || getStoredID() == tabelFourReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelFourReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelFourReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 5</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelFiveReservations$ | async; let tabelFiveReservations;">
+      <ion-item *ngIf="tabelFiveReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelFiveReservation of tabelFiveReservations"
+        [color]="(tabelFiveReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelFiveReservation.time}}&nbsp;&nbsp;{{tabelFiveReservation.id}}&nbsp;&#40;{{tabelFiveReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelFiveReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelFiveReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelFiveReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelFiveReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelFiveReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelFiveReservation.id)"
+            [style.display]="(tabelFiveReservation.status == 's' || getStoredID() == tabelFiveReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end" (click)="showForm(true);setID(tabelFiveReservation.id);clearValues();"
+            color="warning"
+            [style.display]="(tabelFiveReservation.status == 's' || getStoredID() == tabelFiveReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelFiveReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelFiveReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 6</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelSixReservations$ | async; let tabelSixReservations;">
+      <ion-item *ngIf="tabelSixReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelSixReservation of tabelSixReservations"
+        [color]="(tabelSixReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelSixReservation.time}}&nbsp;&nbsp;{{tabelSixReservation.id}}&nbsp;&#40;{{tabelSixReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelSixReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelSixReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelSixReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelSixReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelSixReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelSixReservation.id)"
+            [style.display]="(tabelSixReservation.status == 's' || getStoredID() == tabelSixReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end" (click)="showForm(true);setID(tabelSixReservation.id);clearValues();"
+            color="warning"
+            [style.display]="(tabelSixReservation.status == 's' || getStoredID() == tabelSixReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelSixReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelSixReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 7</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelSevenReservations$ | async; let tabelSevenReservations;">
+      <ion-item *ngIf="tabelSevenReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelSevenReservation of tabelSevenReservations"
+        [color]="(tabelSevenReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelSevenReservation.time}}&nbsp;&nbsp;{{tabelSevenReservation.id}}&nbsp;&#40;{{tabelSevenReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelSevenReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelSevenReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelSevenReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelSevenReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelSevenReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelSevenReservation.id)"
+            [style.display]="(tabelSevenReservation.status == 's' || getStoredID() == tabelSevenReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end" (click)="showForm(true);setID(tabelSevenReservation.id);clearValues();"
+            color="warning"
+            [style.display]="(tabelSevenReservation.status == 's' || getStoredID() == tabelSevenReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelSevenReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelSevenReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 20</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwentyReservations$ | async; let tabelTwentyReservations;">
+      <ion-item *ngIf="tabelTwentyReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelTwentyReservation of tabelTwentyReservations"
+        [color]="(tabelTwentyReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwentyReservation.time}}&nbsp;&nbsp;{{tabelTwentyReservation.id}}&nbsp;&#40;{{tabelTwentyReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwentyReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwentyReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwentyReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwentyReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwentyReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwentyReservation.id)"
+            [style.display]="(tabelTwentyReservation.status == 's' || getStoredID() == tabelTwentyReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end" (click)="showForm(true);setID(tabelTwentyReservation.id);clearValues();"
+            color="warning"
+            [style.display]="(tabelTwentyReservation.status == 's' || getStoredID() == tabelTwentyReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwentyReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelTwentyReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 21</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwentyOneReservations$ | async; let tabelTwentyOneReservations;">
+      <ion-item *ngIf="tabelTwentyOneReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelTwentyOneReservation of tabelTwentyOneReservations"
+        [color]="(tabelTwentyOneReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwentyOneReservation.time}}&nbsp;&nbsp;{{tabelTwentyOneReservation.id}}&nbsp;&#40;{{tabelTwentyOneReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwentyOneReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwentyOneReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwentyOneReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwentyOneReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwentyOneReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwentyOneReservation.id)"
+            [style.display]="(tabelTwentyOneReservation.status == 's' || getStoredID() == tabelTwentyOneReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelTwentyOneReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelTwentyOneReservation.status == 's' || getStoredID() == tabelTwentyOneReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwentyOneReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelTwentyOneReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 22</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwentyTwoReservations$ | async; let tabelTwentyTwoReservations;">
+      <ion-item *ngIf="tabelTwentyTwoReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelTwentyTwoReservation of tabelTwentyTwoReservations"
+        [color]="(tabelTwentyTwoReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwentyTwoReservation.time}}&nbsp;&nbsp;{{tabelTwentyTwoReservation.id}}&nbsp;&#40;{{tabelTwentyTwoReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwentyTwoReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwentyTwoReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwentyTwoReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwentyTwoReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwentyTwoReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwentyTwoReservation.id)"
+            [style.display]="(tabelTwentyTwoReservation.status == 's' || getStoredID() == tabelTwentyTwoReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelTwentyTwoReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelTwentyTwoReservation.status == 's' || getStoredID() == tabelTwentyTwoReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwentyTwoReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelTwentyTwoReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 23</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwentyThreeReservations$ | async; let tabelTwentyThreeReservations;">
+      <ion-item *ngIf="tabelTwentyThreeReservations.length === 0" color="light">There are no reservations for this
+        table.</ion-item>
+      <ion-item *ngFor="let tabelTwentyThreeReservation of tabelTwentyThreeReservations"
+        [color]="(tabelTwentyThreeReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwentyThreeReservation.time}}&nbsp;&nbsp;{{tabelTwentyThreeReservation.id}}&nbsp;&#40;{{tabelTwentyThreeReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwentyThreeReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwentyThreeReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwentyThreeReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwentyThreeReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwentyThreeReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwentyThreeReservation.id)"
+            [style.display]="(tabelTwentyThreeReservation.status == 's' || getStoredID() == tabelTwentyThreeReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelTwentyThreeReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelTwentyThreeReservation.status == 's' || getStoredID() == tabelTwentyThreeReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwentyThreeReservation.status == 's') ? 'solid' : 'outline'" color="danger"
+            slot="end" (click)="remove(tabelTwentyThreeReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 24</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwentyFourReservations$ | async; let tabelTwentyFourReservations;">
+      <ion-item *ngIf="tabelTwentyFourReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelTwentyFourReservation of tabelTwentyFourReservations"
+        [color]="(tabelTwentyFourReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwentyFourReservation.time}}&nbsp;&nbsp;{{tabelTwentyFourReservation.id}}&nbsp;&#40;{{tabelTwentyFourReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwentyFourReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwentyFourReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwentyFourReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwentyFourReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwentyFourReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwentyFourReservation.id)"
+            [style.display]="(tabelTwentyFourReservation.status == 's' || getStoredID() == tabelTwentyFourReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelTwentyFourReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelTwentyFourReservation.status == 's' || getStoredID() == tabelTwentyFourReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwentyFourReservation.status == 's') ? 'solid' : 'outline'" color="danger"
+            slot="end" (click)="remove(tabelTwentyFourReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 25</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwentyFiveReservations$ | async; let tabelTwentyFiveReservations;">
+      <ion-item *ngIf="tabelTwentyFiveReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelTwentyFiveReservation of tabelTwentyFiveReservations"
+        [color]="(tabelTwentyFiveReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwentyFiveReservation.time}}&nbsp;&nbsp;{{tabelTwentyFiveReservation.id}}&nbsp;&#40;{{tabelTwentyFiveReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwentyFiveReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwentyFiveReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwentyFiveReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwentyFiveReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwentyFiveReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwentyFiveReservation.id)"
+            [style.display]="(tabelTwentyFiveReservation.status == 's' || getStoredID() == tabelTwentyFiveReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelTwentyFiveReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelTwentyFiveReservation.status == 's' || getStoredID() == tabelTwentyFiveReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwentyFiveReservation.status == 's') ? 'solid' : 'outline'" color="danger"
+            slot="end" (click)="remove(tabelTwentyFiveReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 26</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwentySixReservations$ | async; let tabelTwentySixReservations;">
+      <ion-item *ngIf="tabelTwentySixReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelTwentySixReservation of tabelTwentySixReservations"
+        [color]="(tabelTwentySixReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwentySixReservation.time}}&nbsp;&nbsp;{{tabelTwentySixReservation.id}}&nbsp;&#40;{{tabelTwentySixReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwentySixReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwentySixReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwentySixReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwentySixReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwentySixReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwentySixReservation.id)"
+            [style.display]="(tabelTwentySixReservation.status == 's' || getStoredID() == tabelTwentySixReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelTwentySixReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelTwentySixReservation.status == 's' || getStoredID() == tabelTwentySixReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwentySixReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelTwentySixReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 27</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelTwentySevenReservations$ | async; let tabelTwentySevenReservations;">
+      <ion-item *ngIf="tabelTwentySevenReservations.length === 0" color="light">There are no reservations for this
+        table.</ion-item>
+      <ion-item *ngFor="let tabelTwentySevenReservation of tabelTwentySevenReservations"
+        [color]="(tabelTwentySevenReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelTwentySevenReservation.time}}&nbsp;&nbsp;{{tabelTwentySevenReservation.id}}&nbsp;&#40;{{tabelTwentySevenReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelTwentySevenReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelTwentySevenReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelTwentySevenReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelTwentySevenReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelTwentySevenReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelTwentySevenReservation.id)"
+            [style.display]="(tabelTwentySevenReservation.status == 's' || getStoredID() == tabelTwentySevenReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelTwentySevenReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelTwentySevenReservation.status == 's' || getStoredID() == tabelTwentySevenReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelTwentySevenReservation.status == 's') ? 'solid' : 'outline'" color="danger"
+            slot="end" (click)="remove(tabelTwentySevenReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 32</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelThirtyOneReservations$ | async; let tabelThirtyOneReservations;">
+      <ion-item *ngIf="tabelThirtyOneReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelThirtyOneReservation of tabelThirtyOneReservations"
+        [color]="(tabelThirtyOneReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelThirtyOneReservation.time}}&nbsp;&nbsp;{{tabelThirtyOneReservation.id}}&nbsp;&#40;{{tabelThirtyOneReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelThirtyOneReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelThirtyOneReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelThirtyOneReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelThirtyOneReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelThirtyOneReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelThirtyOneReservation.id)"
+            [style.display]="(tabelThirtyOneReservation.status == 's' || getStoredID() == tabelThirtyOneReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelThirtyOneReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelThirtyOneReservation.status == 's' || getStoredID() == tabelThirtyOneReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelThirtyOneReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelThirtyOneReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 32</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelThirtyTwoReservations$ | async; let tabelThirtyTwoReservations;">
+      <ion-item *ngIf="tabelThirtyTwoReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelThirtyTwoReservation of tabelThirtyTwoReservations"
+        [color]="(tabelThirtyTwoReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelThirtyTwoReservation.time}}&nbsp;&nbsp;{{tabelThirtyTwoReservation.id}}&nbsp;&#40;{{tabelThirtyTwoReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelThirtyTwoReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelThirtyTwoReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelThirtyTwoReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelThirtyTwoReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelThirtyTwoReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelThirtyTwoReservation.id)"
+            [style.display]="(tabelThirtyTwoReservation.status == 's' || getStoredID() == tabelThirtyTwoReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelThirtyTwoReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelThirtyTwoReservation.status == 's' || getStoredID() == tabelThirtyTwoReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelThirtyTwoReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelThirtyTwoReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 33</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelThirtyThreeReservations$ | async; let tabelThirtyThreeReservations;">
+      <ion-item *ngIf="tabelThirtyThreeReservations.length === 0" color="light">There are no reservations for this
+        table.</ion-item>
+      <ion-item *ngFor="let tabelThirtyThreeReservation of tabelThirtyThreeReservations"
+        [color]="(tabelThirtyThreeReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelThirtyThreeReservation.time}}&nbsp;&nbsp;{{tabelThirtyThreeReservation.id}}&nbsp;&#40;{{tabelThirtyThreeReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelThirtyThreeReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelThirtyThreeReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelThirtyThreeReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelThirtyThreeReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelThirtyThreeReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelThirtyThreeReservation.id)"
+            [style.display]="(tabelThirtyThreeReservation.status == 's' || getStoredID() == tabelThirtyThreeReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelThirtyThreeReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelThirtyThreeReservation.status == 's' || getStoredID() == tabelThirtyThreeReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelThirtyThreeReservation.status == 's') ? 'solid' : 'outline'" color="danger"
+            slot="end" (click)="remove(tabelThirtyThreeReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 34</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelThirtyFourReservations$ | async; let tabelThirtyFourReservations;">
+      <ion-item *ngIf="tabelThirtyFourReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelThirtyFourReservation of tabelThirtyFourReservations"
+        [color]="(tabelThirtyFourReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelThirtyFourReservation.time}}&nbsp;&nbsp;{{tabelThirtyFourReservation.id}}&nbsp;&#40;{{tabelThirtyFourReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelThirtyFourReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelThirtyFourReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelThirtyFourReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelThirtyFourReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelThirtyFourReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelThirtyFourReservation.id)"
+            [style.display]="(tabelThirtyFourReservation.status == 's' || getStoredID() == tabelThirtyFourReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelThirtyFourReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelThirtyFourReservation.status == 's' || getStoredID() == tabelThirtyFourReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelThirtyFourReservation.status == 's') ? 'solid' : 'outline'" color="danger"
+            slot="end" (click)="remove(tabelThirtyFourReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 35</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelThirtyFiveReservations$ | async; let tabelThirtyFiveReservations;">
+      <ion-item *ngIf="tabelThirtyFiveReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelThirtyFiveReservation of tabelThirtyFiveReservations"
+        [color]="(tabelThirtyFiveReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelThirtyFiveReservation.time}}&nbsp;&nbsp;{{tabelThirtyFiveReservation.id}}&nbsp;&#40;{{tabelThirtyFiveReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelThirtyFiveReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelThirtyFiveReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelThirtyFiveReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelThirtyFiveReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelThirtyFiveReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelThirtyFiveReservation.id)"
+            [style.display]="(tabelThirtyFiveReservation.status == 's' || getStoredID() == tabelThirtyFiveReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelThirtyFiveReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelThirtyFiveReservation.status == 's' || getStoredID() == tabelThirtyFiveReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelThirtyFiveReservation.status == 's') ? 'solid' : 'outline'" color="danger"
+            slot="end" (click)="remove(tabelThirtyFiveReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 36</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelThirtySixReservations$ | async; let tabelThirtySixReservations;">
+      <ion-item *ngIf="tabelThirtySixReservations.length === 0" color="light">There are no reservations for this table.
+      </ion-item>
+      <ion-item *ngFor="let tabelThirtySixReservation of tabelThirtySixReservations"
+        [color]="(tabelThirtySixReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelThirtySixReservation.time}}&nbsp;&nbsp;{{tabelThirtySixReservation.id}}&nbsp;&#40;{{tabelThirtySixReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelThirtySixReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelThirtySixReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelThirtySixReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelThirtySixReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelThirtySixReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelThirtySixReservation.id)"
+            [style.display]="(tabelThirtySixReservation.status == 's' || getStoredID() == tabelThirtySixReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelThirtySixReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelThirtySixReservation.status == 's' || getStoredID() == tabelThirtySixReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelThirtySixReservation.status == 's') ? 'solid' : 'outline'" color="danger" slot="end"
+            (click)="remove(tabelThirtySixReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Table 37</ion-card-title>
+    </ion-card-header>
+    <ion-list *ngIf="tabelThirtySevenReservations$ | async; let tabelThirtySevenReservations;">
+      <ion-item *ngIf="tabelThirtySevenReservations.length === 0" color="light">There are no reservations for this
+        table.</ion-item>
+      <ion-item *ngFor="let tabelThirtySevenReservation of tabelThirtySevenReservations"
+        [color]="(tabelThirtySevenReservation.status == 's') ? 'warning' : ''">
+        <ion-icon name="calendar" slot="start"></ion-icon>
+        <ion-label position="fixed" text-wrap>
+          {{tabelThirtySevenReservation.time}}&nbsp;&nbsp;{{tabelThirtySevenReservation.id}}&nbsp;&#40;{{tabelThirtySevenReservation.size}}&#41;
+        </ion-label>
+        <form *ngIf="formDisplayStatus() && getStoredID() == tabelThirtySevenReservation.id" id="modifyForm"
+          [formGroup]="modifyForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label position="floating">Table Number <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="tableNumber" type="number"
+              [placeholder]="(tabelThirtySevenReservation.tabelNumber)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Name <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input formControlName="name" type="text" [placeholder]="(tabelThirtySevenReservation.id)"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Size <ion-text color="danger">*</ion-text>
+            </ion-label>
+            <ion-input required formControlName="size" type="number" [placeholder]="(tabelThirtySevenReservation.size)">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Date and Time <ion-text>*</ion-text>
+            </ion-label>
+            <ion-datetime formControlName="dateTime" display-format="MMM DD, YYYY hh:mm" max="{{utc}}"
+              [placeholder]="(tabelThirtySevenReservation.dateTime)"></ion-datetime>
+          </ion-item>
+          <ion-button block color="primary" type="submit" fill="outline" color="warning" [disabled]="!modifyForm.valid">
+            Modify
+          </ion-button>
+        </form>
+        <div class="ion-padding ion-text-wrap">
+          <ion-button fill="outline" slot="end" (click)="seat(tabelThirtySevenReservation.id)"
+            [style.display]="(tabelThirtySevenReservation.status == 's' || getStoredID() == tabelThirtySevenReservation.id) ? 'none' : ''">
+            Seat</ion-button>
+          <ion-button fill="outline" slot="end"
+            (click)="showForm(true);setID(tabelThirtySevenReservation.id);clearValues();" color="warning"
+            [style.display]="(tabelThirtySevenReservation.status == 's' || getStoredID() == tabelThirtySevenReservation.id) ? 'none' : ''">
+            Modify</ion-button>
+          <ion-button [fill]="(tabelThirtySevenReservation.status == 's') ? 'solid' : 'outline'" color="danger"
+            slot="end" (click)="remove(tabelThirtySevenReservation.id)">Remove</ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+</ion-content>
